@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="{{ with .Site.LanguageCode }}{{ . }}{{ else }}zh-CN{{ end }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ if ne .URL "/" }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+  {{ if .Keywords }}<meta name="keywords" content="{{ range .Keywords }}{{ . }},{{ end }}">{{ else if eq .URL "/" }}<meta name="keywords" content="{{ .Site.Params.Keywords }}">{{ end }}
+  <title>{{ with .Title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}</title>
+  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else if .IsPage }}{{ .Summary }}{{ else }}{{ .Title }}{{ end }}">
+  {{ with .Site.Author.Name }}<meta name="author" content="{{ . }}">{{ end }}
+  <meta name="author" content="{{ .Site.Author.name }}">
+  <meta name="keywords" content="{{ with .Keywords }}{{ delimit . ", " }}{{ end }}{{ if .Site.Params.keywords }}, {{ delimit .Site.Params.keywords ", " }}{{ end }}">
+  <link rel="icon" href="{{ with .Site.Params.favicon }}{{ . }}{{ else }}/favicon.png{{ end }}">
+  {{ with .RSSLink }}
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ . }}">
+  {{ end }}
+  
+  <meta itemprop="name" content="{{ if ne .URL "/" }}{{ .Title }} - {{ end }}{{ .Site.Title }}">
+  <meta itemprop="description" content="{{ if .Description }}{{ .Description }}{{ else if .IsPage }}{{ .Summary }}{{ else }}{{ .Title }}{{ end }}">
+  <meta itemprop="image" content="img/author.jpg">
+  {{ if .Site.Params.Twitter }}<meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@{{ .Site.Params.Twitter }}" />
+  <meta name="twitter:title" content="{{ if ne .URL "/" }}{{ .Title }} - {{ end }}{{ .Site.Title }}" />{{ end }}
+  {{ with .Description }}<meta name="twitter:description" content="{{ . }}" />{{ else }}
+  <meta name="twitter:description" content="{{ .Site.Params.Description }}">{{ end }}
+  {{ if .RSSLink }}<link rel="alternate" href="feed.xml" title="{{ .Site.Title }}" type="application/rss+xml"/>{{ end }}
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+
+  <!-- open graph data -->
+  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else if .IsPage }}{{ .Summary }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else if .IsPage }}{{ .Summary }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta property="og:type" content="blog">
+  <meta property="og:title" content="{{ with .Title }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
+  <meta property="og:url" content="{{ .URL }}">
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ .Site.Title }}">
+  <meta name="twitter:description" content="{{ if .Description }}{{ .Description }}{{ else if .IsPage }}{{ .Summary }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  {{ with .Site.Author.twitter }}
+    <meta name="twitter:creator" content="@{{ . }}">
+  {{ end }}
+  {{ with .Site.Params.fbAppId }}
+    <meta property="fb:app_id" content="{{ . }}">
+  {{ end }}
+
+  <!-- Facebook admins -->
+  {{ with .Site.Params.fbAdminIds }}
+    {{ range . }}
+        <meta property="fb:admins" content="{{ . }}">
+    {{ end }}
+  {{ end }}
+
+  {{ if .Scratch.Get "gravatarEmail" }}
+    <meta property="og:image" content="//www.gravatar.com/avatar/{{ (md5 (.Scratch.Get "gravatarEmail")) | urlize }}?s=640">
+  {{ else if .Site.Author.picture }}
+    <meta property="og:image" content="{{ .Site.Author.picture | absURL }}">
+  {{ end }}
+
+  {{ with .Params.thumbnailImage }}
+    <meta property="og:image" content="{{ . | absURL }}">
+  {{ end }}
+  {{ with .Params.coverImage }}
+    <meta property="og:image" content="{{ . | absURL }}">
+  {{ end }}
+  {{ with .Params.gallery }}
+    {{ range . }}
+      <meta property="og:image" content="{{ range first 1 (split . " ") }}{{ . | absURL }}{{ end }}">
+    {{ end }}
+  {{ end }}
+
+  {{ with .Site.Author.googlePlus }}
+    <link rel="publisher" href="https://plus.google.com/{{ . | urlize }}">
+  {{ end }}
+
+  {{ range .Site.Params.css }}
+  {{ if isset . "href" }}
+    <link {{ if not (isset . "rel") }}rel="stylesheet" {{ end }}{{ range $key, $value := . }} {{ if eq $key "href" }}{{ (printf "%s=\"%s\"" $key ($value | absURL)) | safeHTMLAttr }}{{ else }}{{ (printf "%s=\"%s\"" $key (string $value)) | safeHTMLAttr }}{{ end }}{{ end }}>
+  {{ else }}
+    <link rel="stylesheet" href="{{ . | absURL }}">
+  {{ end }}
+  {{ end }}
+
+  <!-- Template for single page -->
+  {{ if .IsPage }}
+  {{ if .Params.template }}
+    <link rel="stylesheet" href="{{ .Site.Params.templatePrefix }}/{{ .Params.template }}/css/{{ .Params.template }}.css?_=3">
+  {{ end }}
+  {{ else }}
+  <link rel="stylesheet" href="/css/index.css">
+  {{ end }}
+
+  {{ if .Params.ga.async }}
+    {{ template "_internal/google_analytics_async.html" . }}
+  {{ else }}
+    {{ template "_internal/google_analytics.html" . }}
+  {{ end }}
+</head>

@@ -1,0 +1,40 @@
+{{ if .Site.Params.thumbnailImage }}
+  {{ if .Params.thumbnailimage }}
+    {{ .Scratch.Set "thumbnailImage" (.Params.thumbnailimage | absURL) }}
+  {{ else }}
+    {{ if or .Params.autothumbnailimage (and .Site.Params.autoThumbnailImage (ne .Params.autothumbnailimage false)) }}
+      {{ if .Params.gallery }}
+        {{ range first 1 .Params.gallery }}
+          {{ range first 1 (split . " ") }}
+            {{ $.Scratch.Set "thumbnailImage" (. | absURL) }}
+          {{ end }}
+        {{ end }}
+      {{ else }}
+        {{ if .Params.coverimage }}
+          {{ .Scratch.Set "thumbnailImage" (.Params.coverimage | absURL) }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ if or .Params.thumbnailimageposition .Site.Params.thumbnailimageposition }}
+  {{ .Scratch.Set "thumbnailImagePosition" (.Params.thumbnailimageposition | default .Site.Params.thumbnailimageposition) }}
+{{ else }}
+  {{ .Scratch.Set "thumbnailImagePosition" "bottom" }}
+{{ end }}
+<article itemscope itemType="http://schema.org/BlogPosting">
+  <h1 itemprop="headline">
+    <a href="{{ .Permalink }}">{{ .Title }}</a>
+  </h1>
+  <div itemprop="articleBody" class="summary">{{ .Summary }}</div>
+  <div>
+    <a href="{{ .Permalink }}">{{ T "post.read_more" }}</a>
+    {{ with .Params.readingtime }}<span>{{ printf " - %s min read" . }}</span>{{ end }}
+  </div>
+  {{ partial "post/meta" . }}
+  {{ if and (.Scratch.Get "thumbnailImage") (eq (.Scratch.Get "thumbnailImagePosition") "top")}}
+    <a href="{{ .Permalink }}">
+      <img alt="" itemprop="image" src="{{ .Scratch.Get "thumbnailImage" }}"/>
+    </a>
+  {{ end }}
+</article>

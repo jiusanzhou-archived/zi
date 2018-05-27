@@ -1,0 +1,20 @@
+{{ if .Params.template }}
+{{ .Scratch.Set "template" (.Params.template) }}
+{{ else }}
+{{ .Scratch.Set "template" (.Site.Params.template) }}
+{{ end }}
+{{ if .Scratch.Get "template" }}
+{{ .Scratch.Set "tpl" "post/templates/" }}
+{{ .Scratch.Add "tpl" (.Scratch.Get "template") }}
+{{ .Scratch.Add "tpl" ".html" }}
+{{ end }}
+{{ partial "head.html" . }}
+<body>
+    {{ if .Scratch.Get "template" }}
+        {{ partial (.Scratch.Get "tpl") . }}
+    {{ end }}
+    <div class="container">
+        {{ .Content }}
+    </div>
+</body>
+{{ partial "foot.html" . }}

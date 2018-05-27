@@ -1,0 +1,15 @@
+name = "Zi"
+license = "MIT"
+licenselink = "https://github.com/jiusanzhou/Zi/blob/master/LICENSE.md"
+description = "灵感来自字里行间的主题"
+homepage = "https://zi.wellwell.work/"
+tags = [
+  "字里行间",
+  "responsive",
+]
+features = []
+min_version = "0.38"
+
+[author]
+  name = "Zoe"
+  homepage = "https://blog.wellwell.work/about"
